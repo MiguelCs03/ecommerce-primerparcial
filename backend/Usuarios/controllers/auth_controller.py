@@ -17,15 +17,20 @@ def get_client_ip(request):
 # Registro de usuario
 class Register(APIView):
     def post(self, request):
+        print("Datos recibidos:", request.data)
         nombre = request.data.get("nombre")
         correo = request.data.get("correo")
         contraseña = request.data.get("contraseña")
-
+        
         if Usuario.objects.filter(correo=correo).exists():
             return Response({"error": "El correo ya está registrado"}, status=status.HTTP_400_BAD_REQUEST)
 
-        Usuario.objects.create_user(nombre=nombre, correo=correo, contraseña=contraseña)
-        return Response({"mensaje": "Usuario registrado correctamente"}, status=status.HTTP_201_CREATED)
+        try:
+            Usuario.objects.create_user(nombre=nombre, correo=correo, contraseña=contraseña)
+            return Response({"mensaje": "Usuario registrado correctamente"}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            print("Error al crear usuario:", str(e))
+            return Response({"error": "No se pudo registrar el usuario"}, status=status.HTTP_400_BAD_REQUEST)
 
 # Login
 class Login(APIView):
