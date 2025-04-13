@@ -75,5 +75,3 @@ class Logout(APIView):
 
         logout(request)
         return Response({"mensaje": "Sesión cerrada correctamente"}, status=status.HTTP_200_OK)
-
-
