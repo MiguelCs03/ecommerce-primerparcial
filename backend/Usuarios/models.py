@@ -38,7 +38,7 @@ class  Usuario(AbstractBaseUser, PermissionsMixin):
     direccion=models.TextField(blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'correo'
     REQUIRED_FIELDS = ['nombre']    
