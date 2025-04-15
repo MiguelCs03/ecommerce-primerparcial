@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from Productos.models import Producto
+from Productos.models import Producto,Categoria
 from Productos.serializers import ProductoSerializer
 from django.shortcuts import get_object_or_404
 
@@ -61,5 +61,21 @@ class ProductoDetalleVista(APIView):
         producto = get_object_or_404(Producto, pk=pk)
         producto.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response({"mensaje": "Logout exitoso"}, status=status.HTTP_200_OK)
-        # Invalidar el token de acceso
+       
+class ProductosPorCategoriaView(APIView):
+    
+   def get(self, request, valor):
+        try:
+            # Intentamos buscar la categoría por ID o nombre
+            try:
+                categoria = Categoria.objects.get(id=valor)
+            except:
+                categoria = Categoria.objects.get(nombre__iexact=valor)
+
+            productos = Producto.objects.filter(categoria=categoria)
+            serializer = ProductoSerializer(productos, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Categoria.DoesNotExist:
+            return Response({'error': 'Categoría no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+        
