@@ -3,38 +3,38 @@ import { ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCartStore } from "../stores/useCartStore";
 
 const FeaturedProducts = ({ featuredProducts }) => {
-	const [currentIndex, setCurrentIndex] = useState(0);
-	const [itemsPerPage, setItemsPerPage] = useState(4);
+	// const [currentIndex, setCurrentIndex] = useState(0);
+	// const [itemsPerPage, setItemsPerPage] = useState(4);
 
-	const { addToCart } = useCartStore();
+	// const { addToCart } = useCartStore();
 
-	useEffect(() => {
-		const handleResize = () => {
-			if (window.innerWidth < 640) setItemsPerPage(1);
-			else if (window.innerWidth < 1024) setItemsPerPage(2);
-			else if (window.innerWidth < 1280) setItemsPerPage(3);
-			else setItemsPerPage(4);
-		};
+	// useEffect(() => {
+	// 	const handleResize = () => {
+	// 		if (window.innerWidth < 640) setItemsPerPage(1);
+	// 		else if (window.innerWidth < 1024) setItemsPerPage(2);
+	// 		else if (window.innerWidth < 1280) setItemsPerPage(3);
+	// 		else setItemsPerPage(4);
+	// 	};
 
-		handleResize();
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
-	}, []);
+	// 	handleResize();
+	// 	window.addEventListener("resize", handleResize);
+	// 	return () => window.removeEventListener("resize", handleResize);
+	// }, []);
 
-	const nextSlide = () => {
-		setCurrentIndex((prevIndex) => prevIndex + itemsPerPage);
-	};
+	// const nextSlide = () => {
+	// 	setCurrentIndex((prevIndex) => prevIndex + itemsPerPage);
+	// };
 
-	const prevSlide = () => {
-		setCurrentIndex((prevIndex) => prevIndex - itemsPerPage);
-	};
+	// const prevSlide = () => {
+	// 	setCurrentIndex((prevIndex) => prevIndex - itemsPerPage);
+	// };
 
-	const isStartDisabled = currentIndex === 0;
-	const isEndDisabled = currentIndex >= featuredProducts.length - itemsPerPage;
+	// const isStartDisabled = currentIndex === 0;
+	// const isEndDisabled = currentIndex >= featuredProducts.length - itemsPerPage;
 
 	return (
 		<div className='py-2'>
-			<div className='container  '>
+			{/* <div className='container  '>
 				<h2 className='text-left text-lg sm:text-6xl font-bold text-blac font-custom mb-4'>Productos Populares</h2>
 				<div className='relative'>
 					<div className='overflow-hidden'>
@@ -91,7 +91,7 @@ const FeaturedProducts = ({ featuredProducts }) => {
 						<ChevronRight className='w-6 h-6' />
 					</button>
 				</div>
-			</div>
+			</div> */}
 		</div>
 	);
 };

@@ -1,63 +1,42 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-
-import HomePage from "./pages/HomePage";
-import SignUpPage from "./pages/SignUpPage";
-import LoginPage from "./pages/LoginPage";
-import AdminPage from "./pages/AdminPage";
-import CategoryPage from "./pages/CategoryPage";
-
-import Navbar from "./components/Navbar";
-import { Toaster } from "react-hot-toast";
-import { useUserStore } from "./stores/useUserStore";
-import { useEffect } from "react";
-import LoadingSpinner from "./components/LoadingSpinner";
-import CartPage from "./pages/CartPage";
-import { useCartStore } from "./stores/useCartStore";
-import PurchaseSuccessPage from "./pages/PurchaseSuccessPage";
-import PurchaseCancelPage from "./pages/PurchaseCancelPage";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// Eliminar import del AuthProvider
+// import { AuthProvider } from './context/AuthContext'; 
+import Login from './pages/Login';
+import Register from './pages/register';
+import Navbar from './components/Navbar';
+import Dashboard from './pages/Dashboard';
+import ProtectedRoute from './components/ProtectedRoute';
+import Home from './pages/Home';
+import CategoryPage from './pages/CategoryPage';
+// Ya no es necesario importar useEffect si ya tienes inicialización automática en el store
 
 function App() {
-	const { user, checkAuth, checkingAuth } = useUserStore();
-	const { getCartItems } = useCartStore();
-	useEffect(() => {
-		checkAuth();
-	}, [checkAuth]);
-
-	useEffect(() => {
-		if (!user) return;
-
-		getCartItems();
-	}, [getCartItems, user]);
-
-	if (checkingAuth) return <LoadingSpinner />;
-
-	return (
-		<div className='min-h-screen bg-white text-black relative overflow-hidden'>
-			{/* Background gradient */}
-		
-
-			<div className='relative z-50 pt-20'>
-				<Navbar />
-				<Routes>
-					<Route path='/' element={<HomePage />} />
-					<Route path='/signup' element={<SignUpPage /> } />
-					<Route path='/login' element={<LoginPage /> } />
-					<Route
-						path='/secret-dashboard'
-						element={user?.role === "admin" ? <AdminPage /> : <Navigate to='/login' />}
-					/>
-					<Route path='/category/:category' element={<CategoryPage />} />
-					<Route path='/cart' element={user ? <CartPage /> : <Navigate to='/login' />} />
-					<Route
-						path='/purchase-success'
-						element={user ? <PurchaseSuccessPage /> : <Navigate to='/login' />}
-					/>
-					<Route path='/purchase-cancel' element={user ? <PurchaseCancelPage /> : <Navigate to='/login' />} />
-				</Routes>
-			</div>
-			<Toaster />
-		</div>
-	);
+  // No es necesario inicializar aquí si ya tienes la inicialización automática en el store
+  // Si aún prefieres mantener el control de la inicialización aquí, puedes dejarlo
+  
+  return (
+    // Eliminar AuthProvider
+    <Router>
+      <div>
+        <Navbar />
+      </div>
+      
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path='/category/:category' element={<CategoryPage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

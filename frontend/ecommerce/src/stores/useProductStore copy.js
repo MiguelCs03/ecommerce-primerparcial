@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
 import axios from "../lib/axios";
-import ProductService from "../services/ProductService";
 
 export const useProductStore = create((set) => ({
 	products: [],
@@ -21,6 +20,7 @@ export const useProductStore = create((set) => ({
 			set({ loading: false });
 		}
 	},
+
 	fetchAllProducts: async () => {
 		set({ loading: true });
 		try {
@@ -34,9 +34,8 @@ export const useProductStore = create((set) => ({
 	fetchProductsByCategory: async (category) => {
 		set({ loading: true });
 		try {
-			const response = await ProductService.getProductsByCategory(category);
-			console.log(+ response);
-			set({ products: response, loading: false });
+			const response = await axios.get(`/products/category/${category}`);
+			set({ products: response.data.products, loading: false });
 		} catch (error) {
 			set({ error: "Failed to fetch products", loading: false });
 			toast.error(error.response.data.error || "Failed to fetch products");
