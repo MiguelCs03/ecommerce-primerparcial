@@ -12,6 +12,17 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dwiyijoph',
+    'API_KEY': '972957819833968',
+    'API_SECRET': 'UCdnhyVrDTfgmfltdoadvD5wd4A',
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -42,7 +53,11 @@ INSTALLED_APPS = [
     'Usuarios',
     'corsheaders',
     'Productos',
+    'cloudinary',
+    'cloudinary_storage',
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
