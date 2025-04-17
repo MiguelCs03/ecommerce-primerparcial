@@ -1,5 +1,5 @@
 from django.urls import path
-from Productos.controllers.producto_controller import ProductoListaCrearVista, ProductoDetalleVista
+from Productos.controllers.producto_controller import ProductoListaCrearVista, ProductoDetalleVista, ProductosPorCategoriaView
 from Productos.controllers.categoria_controller import CategoriaListaCrearVista, CategoriaDetalleVista
 from Productos.controllers.proveedor_controller import ProveedorListaCrearVista, ProveedorDetalleVista
 from Productos.controllers.inventario_controller import InventarioListaCrearVista, InventarioDetalleVista

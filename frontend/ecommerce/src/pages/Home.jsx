@@ -1,24 +1,23 @@
 import { useEffect } from "react";
 import CategoryItem from "../components/CategoryItem";
 import { useProductStore } from "../stores/useProductStore";
-import FeaturedProducts from "../components/FeaturedProducts";
+// import FeaturedProducts from "../components/FeaturedProducts";
 import BannerCarousel from "../components/CarruselOfertas";
-const categories = [
-	{ href: "/jeans", name: "Jeans", imageUrl: "/jeans.jpg" },
-	{ href: "/t-shirts", name: "T-shirts", imageUrl: "/tshirts.jpg" },
-	{ href: "/shoes", name: "Shoes", imageUrl: "/shoes.jpg" },
-	{ href: "/glasses", name: "Glasses", imageUrl: "/glasses.png" },
-	{ href: "/jackets", name: "Jackets", imageUrl: "/jackets.jpg" },
-	{ href: "/suits", name: "Suits", imageUrl: "/suits.jpg" },
-	{ href: "/bags", name: "Bags", imageUrl: "/bags.jpg" },
-];
+import { useCategoryStore  } from "../stores/useCategoryStore"; // 
 
-const HomePage = () => {
-	const { fetchFeaturedProducts, products, isLoading } = useProductStore();
 
+
+
+
+
+
+const Home = () => {
+	const { fetchFeaturedProducts} = useProductStore();
+	const { loadCategories, categories,} = useCategoryStore();
 	useEffect(() => {
 		fetchFeaturedProducts();
-	}, [fetchFeaturedProducts]);
+		loadCategories();
+	}, [fetchFeaturedProducts,loadCategories]);
 
 	return (
 		
@@ -42,17 +41,22 @@ const HomePage = () => {
 						</p>
 
 						<div className='flex flex-row overflow-x-auto gap-8 py-6 px-4 justify-center'>
-						{categories.map((category) => (
-							<CategoryItem category={category} key={category.name} />
-						))}
-						</div>
+						{ categories.length > 0 ? (
+							categories.map((category) => (
+								// <h1 key={category.id}>{category.nombre}</h1> // <CategoryItem category={category} key={category.id} />
+								<CategoryItem category={category} key={category.id} />
+							))
+						) : (
+							<p>Cargando categorías...</p>
+						)}
+					</div>
 
 
 					</div>
 
-					<div className="px-3">
+					{/* <div className="px-3">
 						{!isLoading && products.length > 0 && <FeaturedProducts featuredProducts={products} />}
-					</div>
+					</div> */}
 				</div>
 						
 				<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 pl-6 '>
@@ -88,4 +92,6 @@ const HomePage = () => {
 		</>
 	);
 };
-export default HomePage;
+
+
+export default Home;

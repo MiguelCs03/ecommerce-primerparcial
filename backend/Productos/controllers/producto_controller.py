@@ -1,7 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+<<<<<<< HEAD
 from Productos.models import Producto,Categoria
+=======
+from Productos.models import Categoria, Producto
+>>>>>>> origin/javier
 from Productos.serializers import ProductoSerializer
 from django.shortcuts import get_object_or_404
 
