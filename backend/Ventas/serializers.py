@@ -18,7 +18,7 @@ class TipoVentaSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class VentaSerializer(serializers.ModelSerializer):
-    tipo_venta = TipoVentaSerializer()
+    tipo_venta = serializers.PrimaryKeyRelatedField(queryset=TipoVenta.objects.all())
 
     class Meta:
         model = Venta

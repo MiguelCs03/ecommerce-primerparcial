@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from Ventas.models import Venta
 from Ventas.serializers import VentaSerializer
+from Productos.models import Inventario, Producto	
 
 
 
@@ -12,10 +13,32 @@ class VentaListCreateAPIView(APIView):
         serializer = VentaSerializer(ventas, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         serializer = VentaSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            venta = serializer.save()
+
+            # Buscar el inventario del producto
+            try:
+                inventario = Inventario.objects.get(producto=venta.producto)
+            except Inventario.DoesNotExist:
+                return Response(
+                    {"error": "No hay inventario para este producto."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Verificar si hay suficiente stock
+            if inventario.stock < venta.cantidad:
+                venta.delete()  # revertir la venta
+                return Response(
+                    {"error": "Stock insuficiente."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Restar del stock
+            inventario.stock -= venta.cantidad
+            inventario.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
