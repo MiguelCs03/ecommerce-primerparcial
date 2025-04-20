@@ -3,6 +3,7 @@ from Productos.controllers.producto_controller import ProductoListaCrearVista, P
 from Productos.controllers.categoria_controller import CategoriaListaCrearVista, CategoriaDetalleVista
 from Productos.controllers.proveedor_controller import ProveedorListaCrearVista, ProveedorDetalleVista
 from Productos.controllers.inventario_controller import InventarioListaCrearVista, InventarioDetalleVista
+from Productos.controllers.producto_controller import ProductosPorCategoriaView
 urlpatterns = [
     path('listarCrear/', ProductoListaCrearVista.as_view(), name='producto-listar-crear'),
     path('detalles/<int:pk>/', ProductoDetalleVista.as_view(), name='producto-detalle'),
