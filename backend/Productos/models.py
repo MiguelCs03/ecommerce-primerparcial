@@ -1,5 +1,5 @@
 from django.db import models
-
+from cloudinary.models import CloudinaryField
 # Create your models here.
 
 class Categoria(models.Model):
@@ -20,7 +20,7 @@ class Producto(models.Model):
     precio_compra = models.DecimalField(max_digits=10, decimal_places=2)
     precio_venta = models.DecimalField(max_digits=10, decimal_places=2)
     descripcion =models.TextField(blank=True)
-    imagen = models.ImageField(upload_to='productos/', blank=True, null=True)
+    imagen = CloudinaryField('image', null=True, blank=True) 
 
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE)

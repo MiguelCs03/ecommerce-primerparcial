@@ -13,6 +13,13 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import cloudinary
 
+
+cloudinary.config(
+    cloud_name='dywiyjoph',
+    api_key='199425179995799',
+    api_secret='QsiAhOzgHL2qwsCkl-gWBwBJKEI'
+)
+
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'dywiyjoph',
     'API_KEY': '199425179995799',
