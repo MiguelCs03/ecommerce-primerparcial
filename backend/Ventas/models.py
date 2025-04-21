@@ -12,9 +12,17 @@ class Estado(models.Model):
 class Orden(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     fecha = models.DateField(auto_now_add=True)
+    estado = models.CharField(max_length=50, default='Pendiente')
 
     def __str__(self):
         return f"Orden #{self.id} - Usuario {self.usuario.nombre}"
+
+class OrdenItem(models.Model):
+    orden = models.ForeignKey(Orden, on_delete=models.CASCADE, related_name='items')
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()
+    def __str__(self):
+        return f"{self.producto.nombre} x{self.cantidad}"
 
 class TipoVenta(models.Model):
     descripcion = models.CharField(max_length=50)
@@ -25,14 +33,13 @@ class TipoVenta(models.Model):
 
 
 class Venta(models.Model):
-    orden = models.ForeignKey(Orden, on_delete=models.CASCADE, related_name='ventas')
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    cantidad = models.PositiveIntegerField()
+    orden = models.OneToOneField(Orden, on_delete=models.CASCADE)
     total = models.DecimalField(max_digits=10, decimal_places=2)
     tipo_venta = models.ForeignKey(TipoVenta, on_delete=models.CASCADE)
+    fecha = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f"Venta #{self.id} - {self.cantidad} x {self.producto.nombre}"
+        return f"Venta #{self.id} - Total: {self.total}"
 
 
 class Factura(models.Model):
