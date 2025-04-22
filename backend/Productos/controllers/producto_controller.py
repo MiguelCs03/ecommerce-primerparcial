@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from Productos.models import Categoria, Producto
+from Productos.models import Producto, Categoria
 from Productos.serializers import ProductoSerializer
 from django.shortcuts import get_object_or_404
 
@@ -61,10 +61,7 @@ class ProductoDetalleVista(APIView):
         producto = get_object_or_404(Producto, pk=pk)
         producto.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response({"mensaje": "Logout exitoso"}, status=status.HTTP_200_OK)
-        # Invalidar el token de acceso
-        
-
+       
 class ProductosPorCategoriaView(APIView):
     
    def get(self, request, valor):
