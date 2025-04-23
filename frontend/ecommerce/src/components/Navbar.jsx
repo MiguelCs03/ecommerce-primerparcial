@@ -7,7 +7,7 @@ const Navbar = () => {
     const { user } = useUserStore();
     const { isAuthenticated, logout } = useAuthStore(); // Use the custom hook
     const isAdmin = user?.role === "admin";
-    const { cart } = useCartStore();
+    const { cart,length } = useCartStore();
 
     return (
         <header className='fixed top-0 left-0 w-full bg-white bg-opacity-90 backdrop-blur-md shadow-lg z-40 transition-all duration-300 '>
@@ -21,23 +21,23 @@ const Navbar = () => {
                         <Link to={"/"} className='text-black hover:text-gray-700 transition duration-300 ease-in-out'>
                             Home
                         </Link>
-                        {user && (
+                        
                             <Link
                                 to={"/cart"}
                                 className='relative group text-black hover:text-gray-700 transition duration-300 ease-in-out'
                             >
                                 <ShoppingCart className='inline-block mr-1 group-hover:text-gray-700' size={20} />
                                 <span className='hidden sm:inline'>Cart</span>
-                                {cart.length > 0 && (
+                                {length > 0 && (
                                     <span
                                         className='absolute -top-2 -left-2 bg-red-500 text-white rounded-full px-2 py-0.5 
                                         text-xs group-hover:bg-gray-700 transition duration-300 ease-in-out'
                                     >
-                                        {cart.length}
+                                        {length}
                                     </span>
                                 )}
                             </Link>
-                        )}
+                       
                         {isAdmin && (
                             <Link
                                 className='bg-black hover:bg-gray-700 text-white px-3 py-1 rounded-md font-medium

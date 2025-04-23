@@ -5,11 +5,11 @@ import { ShoppingCart } from "lucide-react";
 import CartItem from "../components/CartItem";
 import PeopleAlsoBought from "../components/PeopleAlsoBought";
 import OrderSummary from "../components/OrderSummary";
-import GiftCouponCard from "../components/GiftCouponCard";
+
 
 const CartPage = () => {
 	const { cart } = useCartStore();
-
+	
 	return (
 		<div className='py-8 md:py-16'>
 			<div className='mx-auto max-w-screen-xl px-4 2xl:px-0'>
@@ -40,7 +40,7 @@ const CartPage = () => {
 							transition={{ duration: 0.5, delay: 0.4 }}
 						>
 							<OrderSummary />
-							<GiftCouponCard />
+							{/* <GiftCouponCard /> */}
 						</motion.div>
 					)}
 				</div>

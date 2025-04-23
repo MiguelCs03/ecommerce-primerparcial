@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useCartStore } from "../stores/useCartStore";
 import { Link } from "react-router-dom";
@@ -5,16 +6,30 @@ import { MoveRight } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "../lib/axios";
 
-const stripePromise = loadStripe(
-	"pk_test_51QnrFELKCM2g9mCsZLNymeo9Fc7f8ycHZTY6oaQAD2skhkfgFqkuQf93GtJoDmLgrhRs2qWLcEUolAqicqvfQwJI009ffvVwkA"
-);
+const stripePromise = loadStripe("pk_test_...");
 
 const OrderSummary = () => {
-	const { total, subtotal, coupon, isCouponApplied, cart } = useCartStore();
+	const {
+		total,
+		subtotal,
+		coupon,
+		isCouponApplied,
+		cart,
+		calculateTotals,
+	} = useCartStore();
 
-	const savings = subtotal - total;
-	const formattedSubtotal = subtotal.toFixed(2);
-	const formattedTotal = total.toFixed(2);
+	// ✅ Asegurar que se calculen los totales al montar
+	useEffect(() => {
+		calculateTotals();
+	}, [calculateTotals]);
+
+	// ✅ Manejar valores seguros
+	const safeSubtotal = Number(subtotal) || 0;
+	const safeTotal = Number(total) || 0;
+	const savings = safeSubtotal - safeTotal;
+
+	const formattedSubtotal = safeSubtotal.toFixed(2);
+	const formattedTotal = safeTotal.toFixed(2);
 	const formattedSavings = savings.toFixed(2);
 
 	const handlePayment = async () => {
@@ -25,9 +40,7 @@ const OrderSummary = () => {
 		});
 
 		const session = res.data;
-		const result = await stripe.redirectToCheckout({
-			sessionId: session.id,
-		});
+		const result = await stripe.redirectToCheckout({ sessionId: session.id });
 
 		if (result.error) {
 			console.error("Error:", result.error);
@@ -41,7 +54,7 @@ const OrderSummary = () => {
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5 }}
 		>
-			<p className='text-xl font-semibold text-emerald-400'>Order summary</p>
+			<p className='text-xl font-semibold text-emerald-400'>Resumen de Compra</p>
 
 			<div className='space-y-4'>
 				<div className='space-y-2'>
@@ -63,6 +76,7 @@ const OrderSummary = () => {
 							<dd className='text-base font-medium text-emerald-400'>-{coupon.discountPercentage}%</dd>
 						</dl>
 					)}
+
 					<dl className='flex items-center justify-between gap-4 border-t border-gray-600 pt-2'>
 						<dt className='text-base font-bold text-white'>Total</dt>
 						<dd className='text-base font-bold text-emerald-400'>${formattedTotal}</dd>
@@ -92,4 +106,5 @@ const OrderSummary = () => {
 		</motion.div>
 	);
 };
+
 export default OrderSummary;
