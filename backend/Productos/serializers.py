@@ -3,10 +3,17 @@
 from rest_framework import serializers
 from .models import Producto, Categoria, Proveedor, Inventario
 
+from rest_framework import serializers
+from Productos.models import Producto
+
 class ProductoSerializer(serializers.ModelSerializer):
+    stock = serializers.IntegerField(source='inventario.stock', read_only=True)
+
     class Meta:
         model = Producto
-        fields = '__all__'
+        fields = ['id', 'nombre', 'precio_compra', 'precio_venta', 'descripcion', 'imagen',
+                  'categoria', 'proveedor', 'stock']
+
 
     def validate_precio_venta(self, valor):
         if valor <= 0:
