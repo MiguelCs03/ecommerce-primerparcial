@@ -20,9 +20,9 @@ const CartItem = ({ item }) => {
 							  focus:ring-emerald-500'
 							onClick={() => updateQuantity(item._id, item.quantity - 1)}
 						>
-							<Minus className='text-gray-300' />
+							<Minus className='text-white' />
 						</button>
-						<p>{item.quantity}</p>
+						<p className="text-gray-300">{item.quantity}</p>
 						<button
 							className='inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border
 							 border-gray-600 bg-gray-700 hover:bg-gray-600 focus:outline-none 
@@ -34,15 +34,15 @@ const CartItem = ({ item }) => {
 					</div>
 
 					<div className='text-end md:order-4 md:w-32'>
-						<p className='text-base font-bold text-emerald-400'>${item.price}</p>
+						<p className='text-base font-bold text-emerald-400'>${item.precio}</p>
 					</div>
 				</div>
 
 				<div className='w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md'>
 					<p className='text-base font-medium text-white hover:text-emerald-400 hover:underline'>
-						{item.name}
+						{item.nombre}
 					</p>
-					<p className='text-sm text-gray-400'>{item.description}</p>
+					<p className='text-sm text-gray-400'>{item.descripcion}</p>
 
 					<div className='flex items-center gap-4'>
 						<button

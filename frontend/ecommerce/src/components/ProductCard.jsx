@@ -1,19 +1,28 @@
-import toast from "react-hot-toast";
+
 import { ShoppingCart } from "lucide-react";
-import { useUserStore } from "../stores/useUserStore";
+
 import { useCartStore } from "../stores/useCartStore";
 
 const ProductCard = ({ product }) => {
-	const { user } = useUserStore();
+	
 	const { addToCart } = useCartStore();
+
 	const handleAddToCart = () => {
-		if (!user) {
-			toast.error("Please login to add products to cart", { id: "login" });
-			return;
-		} else {
-			// add to cart
-			addToCart(product);
-		}
+		console.log("Producto agregado al carrito");
+		// if (!user) {
+		// 	toast.error("Please login to add products to cart", { id: "login" });
+		// 	return;
+		// }
+		console.log("Producto agregado al carrito 2");
+		// Adaptar el producto al formato esperado por el carrito
+		const productForCart = {
+			_id: product._id,
+			nombre: product.nombre,
+			precio: product.precio_venta,
+			image: product.image,
+		};
+
+		addToCart(productForCart);
 	};
 
 	return (
@@ -42,4 +51,5 @@ const ProductCard = ({ product }) => {
 		</div>
 	);
 };
+
 export default ProductCard;

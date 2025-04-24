@@ -5,7 +5,7 @@ import axios from "../lib/axios";
 export const useProductStore = create((set) => ({
 	products: [],
 	loading: false,
-
+	
 	setProducts: (products) => set({ products }),
 	createProduct: async (productData) => {
 		set({ loading: true });

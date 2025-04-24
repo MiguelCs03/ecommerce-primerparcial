@@ -24,7 +24,7 @@ class Producto(models.Model):
 
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE)
-
+    
 
     def __str__(self):
         return self.nombre
@@ -36,5 +36,6 @@ class Inventario(models.Model):
     cantidad_maxima = models.IntegerField()
 
     def __str__(self):
+        
         return f'Inventario de {self.producto.nombre}'
     

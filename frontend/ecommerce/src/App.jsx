@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import CategoryPage from './pages/CategoryPage';
+import CartPage from './pages/CartPage';
 // Ya no es necesario importar useEffect si ya tienes inicialización automática en el store
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path='/category/:category' element={<CategoryPage />} />
+        <Route path='/cart' element={<CartPage />} />
         <Route
           path="/dashboard"
           element={

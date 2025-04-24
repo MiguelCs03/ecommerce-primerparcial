@@ -1,10 +1,15 @@
-import { useState } from 'react';
+import {  useEffect,useState } from 'react';
 import { useAuthStore } from '../stores/useAuthStore';
+import { useProductStore } from "../stores/useProductStore";
 
 function Dashboard() {
   const { currentUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState('resumen');
-
+  const {  products,fetchAllProducts } = useProductStore();
+  console.log(products);
+  useEffect(() => {
+		fetchAllProducts();
+	}, [fetchAllProducts]);
   // Datos simulados para el dashboard
   const estadisticas = {
     ventas: {
@@ -75,6 +80,9 @@ function Dashboard() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
+
+
+
                 <tr>
                   <td className="px-6 py-4 whitespace-nowrap">#1287</td>
                   <td className="px-6 py-4 whitespace-nowrap">María López</td>
@@ -88,19 +96,7 @@ function Dashboard() {
                     <button className="text-green-600 hover:text-green-900">Actualizar</button>
                   </td>
                 </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">#1286</td>
-                  <td className="px-6 py-4 whitespace-nowrap">Juan Pérez</td>
-                  <td className="px-6 py-4">Auriculares Pro (1)</td>
-                  <td className="px-6 py-4 whitespace-nowrap">$149.99</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completado</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-indigo-600 hover:text-indigo-900 mr-3">Ver</button>
-                    <button className="text-green-600 hover:text-green-900">Actualizar</button>
-                  </td>
-                </tr>
+                
               </tbody>
             </table>
           </div>
@@ -125,28 +121,19 @@ function Dashboard() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">P001</td>
-                  <td className="px-6 py-4 whitespace-nowrap">Smartphone XR-7</td>
-                  <td className="px-6 py-4 whitespace-nowrap">Electrónica</td>
-                  <td className="px-6 py-4 whitespace-nowrap">$799.99</td>
-                  <td className="px-6 py-4 whitespace-nowrap">24</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-indigo-600 hover:text-indigo-900 mr-3">Editar</button>
-                    <button className="text-red-600 hover:text-red-900">Eliminar</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">P002</td>
-                  <td className="px-6 py-4 whitespace-nowrap">Auriculares Pro</td>
-                  <td className="px-6 py-4 whitespace-nowrap">Audio</td>
-                  <td className="px-6 py-4 whitespace-nowrap">$149.99</td>
-                  <td className="px-6 py-4 whitespace-nowrap">42</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-indigo-600 hover:text-indigo-900 mr-3">Editar</button>
-                    <button className="text-red-600 hover:text-red-900">Eliminar</button>
-                  </td>
-                </tr>
+                {products.map((producto) => (
+                  <tr key={producto.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">{producto.id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{producto.nombre}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{producto.categoria}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">${producto.precio_compra}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{producto.stock}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button className="text-indigo-600 hover:text-indigo-900 mr-3">Editar</button>
+                      <button className="text-red-600 hover:text-red-900">Eliminar</button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

@@ -1,5 +1,3 @@
-# Productos/serializers.py
-
 from rest_framework import serializers
 from .models import Producto, Categoria, Proveedor, Inventario
 
@@ -33,4 +31,9 @@ class ProveedorSerializer(serializers.ModelSerializer):
 class InventarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Inventario
-        fields = '__all__'      
+        fields = '__all__'
+
+    def validate_stock(self, valor):
+        if valor < 0:
+            raise serializers.ValidationError("El stock no puede ser negativo.")
+        return valor
