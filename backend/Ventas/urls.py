@@ -4,6 +4,7 @@ from Ventas.controllers.tipoVenta_controller import TipoVentaListCreateAPIView, 
 from Ventas.controllers.venta_controller import VentaListCreateAPIView, VentaRetrieveUpdateDestroyAPIView
 from Ventas.controllers.factura_controller import FacturaListCreateAPIView, FacturaRetrieveUpdateDestroyAPIView
 from Ventas.controllers.orden_controller import OrdenViewSet
+from .views import RecomendacionProductosView
 
 urlpatterns = [
     path('estados/', EstadoListCreateAPIView.as_view(), name='estado-list-create'),
@@ -15,5 +16,6 @@ urlpatterns = [
     path('facturas/', FacturaListCreateAPIView.as_view(), name='factura-list-create'),
     path('facturas/<int:pk>/', FacturaRetrieveUpdateDestroyAPIView.as_view(), name='factura-detail'),
     path('ordenes/', OrdenViewSet.as_view({'get': 'list', 'post': 'create'}), name='orden-list-create'),
+    path('recomendaciones/', RecomendacionProductosView.as_view(), name='recomendaciones'),
   
 ]
