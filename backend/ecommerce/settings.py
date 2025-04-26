@@ -44,6 +44,7 @@ SECRET_KEY = 'django-insecure-vz8a-km^f(lh0tdtyrny*7vl+4aw5=(hk6yc7d$5)2ul8w-p#=
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+#ALLOWED_HOSTS = ['3.143.169.26']
 #para activar el modelo personalizado de la tabla usuario 
 AUTH_USER_MODEL = 'Usuarios.Usuario'
 
