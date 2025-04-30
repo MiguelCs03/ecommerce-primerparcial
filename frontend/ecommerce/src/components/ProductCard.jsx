@@ -16,12 +16,12 @@ const ProductCard = ({ product }) => {
 		console.log("Producto agregado al carrito 2");
 		// Adaptar el producto al formato esperado por el carrito
 		const productForCart = {
-			_id: product._id,
+			_id: product.id,
 			nombre: product.nombre,
 			precio: product.precio_venta,
 			image: product.image,
 		};
-
+		console.log("Producto agregado al carrito", productForCart);
 		addToCart(productForCart);
 	};
 

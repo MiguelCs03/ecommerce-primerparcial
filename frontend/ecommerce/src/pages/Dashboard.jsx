@@ -1,313 +1,75 @@
-import {  useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useProductStore } from "../stores/useProductStore";
 import { useUsuarioStore } from '../stores/useUsuarioStore';
 
+// Componentes
+import DashboardHeader from './components/DashboardHeader';
+import Sidebar from './components/Sidebar';
+import ResumenTab from './components/tabs/ResumenTab';
+import PedidosTab from './components/tabs/PedidosTab';
+import ProductosTab from './components/tabs/ProductosTab';
+import ClientesTab from './components/tabs/ClientesTab';
+import AdministracionTab from './components/tabs/AdministracionTab';
+import ConfiguracionTab from './components/tabs/ConfiguracionTab';
+
 function Dashboard() {
   const { currentUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState('resumen');
-  const {  products,fetchAllProducts } = useProductStore();
-  const {   fetchUsuariosA, fetchUsuariosB,usuariosA,usuariosB } = useUsuarioStore();
-  console.log(products);
-  console.log(usuariosA);
-  console.log(usuariosB);
+  const { products, fetchAllProducts } = useProductStore();
+  const { fetchUsuariosA, fetchUsuariosB, usuariosA, usuariosB } = useUsuarioStore();
+  
   useEffect(() => {
-		fetchAllProducts();
+    fetchAllProducts();
     fetchUsuariosA();
     fetchUsuariosB();
-	}, [fetchAllProducts,fetchUsuariosA,fetchUsuariosB],);
-  // Datos simulados para el dashboard
-  const estadisticas = {
-    ventas: {
-      hoy: 2450,
-      semana: 14320,
-      mes: 42800
-    },
-    pedidos: {
-      nuevos: 12,
-      procesando: 8,
-      enviados: 24,
-      completados: 96
-    },
-    productos: {
-      total: 158,
-      sinStock: 7,
-      masVendidos: ['Smartphone XR-7', 'Auriculares Pro', 'Smartwatch V3']
-    },
-    clientes: {
-      total: 532,
-      nuevosHoy: 5
+  }, [fetchAllProducts, fetchUsuariosA, fetchUsuariosB]);
+
+  const getTabTitle = () => {
+    switch (activeTab) {
+      case 'resumen': return 'Resumen General';
+      case 'pedidos': return 'Gestión de Pedidos';
+      case 'productos': return 'Inventario de Productos';
+      case 'clientes': return 'Base de Clientes';
+      case 'Administracion': return 'Base de Clientes';
+      case 'configuracion': return 'Configuración de la Tienda';
+      default: return 'Selecciona una sección';
     }
   };
 
-  const renderContenidoTab = () => {
+  const renderContent = () => {
     switch (activeTab) {
       case 'resumen':
-        return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-lg shadow p-4">
-              <h3 className="text-lg font-medium text-gray-700">Ventas Hoy</h3>
-              <p className="text-2xl font-bold">${estadisticas.ventas.hoy}</p>
-              <p className="text-sm text-green-600">+12% respecto a ayer</p>1
-            </div>
-            
-            <div className="bg-white rounded-lg shadow p-4">
-              <h3 className="text-lg font-medium text-gray-700">Pedidos Nuevos</h3>
-              <p className="text-2xl font-bold">{estadisticas.pedidos.nuevos}</p>
-              <p className="text-sm text-blue-600">Requieren atención</p>
-            </div>
-            
-            <div className="bg-white rounded-lg shadow p-4">
-              <h3 className="text-lg font-medium text-gray-700">Productos sin Stock</h3>
-              <p className="text-2xl font-bold">{estadisticas.productos.sinStock}</p>
-              <p className="text-sm text-red-600">Necesitan reposición</p>
-            </div>
-            
-            <div className="bg-white rounded-lg shadow p-4">
-              <h3 className="text-lg font-medium text-gray-700">Clientes Nuevos</h3>
-              <p className="text-2xl font-bold">{estadisticas.clientes.nuevosHoy}</p>
-              <p className="text-sm text-green-600">Registrados hoy</p>
-            </div>
-          </div>
-        );
-      
+        return <ResumenTab />;
       case 'pedidos':
-        return (
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Productos</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-
-
-
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">#1287</td>
-                  <td className="px-6 py-4 whitespace-nowrap">María López</td>
-                  <td className="px-6 py-4">Smartphone XR-7 (1), Cargador Rápido (1)</td>
-                  <td className="px-6 py-4 whitespace-nowrap">$899.99</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Procesando</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-indigo-600 hover:text-indigo-900 mr-3">Ver</button>
-                    <button className="text-green-600 hover:text-green-900">Actualizar</button>
-                  </td>
-                </tr>
-                
-              </tbody>
-            </table>
-          </div>
-        );
-      
+        return <PedidosTab />;
       case 'productos':
-        return (
-          <div className="bg-white rounded-lg shadow">
-            <div className="p-4 border-b flex justify-between items-center">
-              <h3 className="text-lg font-medium">Listado de Productos</h3>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Añadir Producto</button>
-            </div>
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoría</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {products.map((producto) => (
-                  <tr key={producto.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">{producto.id}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{producto.nombre}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{producto.categoria}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">${producto.precio_compra}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{producto.stock}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button className="text-indigo-600 hover:text-indigo-900 mr-3">Editar</button>
-                      <button className="text-red-600 hover:text-red-900">Eliminar</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        );
-      
+        return <ProductosTab products={products} />;
       case 'clientes':
-        return (
-          <div className="bg-white rounded-lg shadow">
-            <div className="p-4 border-b">
-              <h3 className="text-lg font-medium">Clientes Registrados</h3>
-            </div>
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-                </tr>
-              </thead>             
-                <tbody className="bg-white divide-y divide-gray-200">
-                {usuariosA.map((usuariosA) => (
-                  <tr key={usuariosA.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">{usuariosA.id}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{usuariosA.nombre}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{usuariosA.correo}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button className="text-indigo-600 hover:text-indigo-900 mr-3">Editar</button>
-                      <button className="text-red-600 hover:text-red-900">Eliminar</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-
-
-
-
-            
-            </table>
-          </div>
-        );
-
-        case 'Administracion':
-          return (
-            <div className="bg-white rounded-lg shadow">
-              <div className="p-4 border-b">
-                <h3 className="text-lg font-medium">Clientes Registrados</h3>
-              </div>
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-                  </tr>
-                </thead>             
-                  <tbody className="bg-white divide-y divide-gray-200">
-                  {usuariosA.map((usuariosB) => (
-                    <tr key={usuariosB.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">{usuariosB.id}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{usuariosB.nombre}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{usuariosB.correo}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button className="text-indigo-600 hover:text-indigo-900 mr-3">Editar</button>
-                        <button className="text-red-600 hover:text-red-900">Eliminar</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-  
-  
-  
-  
-              
-              </table>
-            </div>
-          );
-        
+        return <ClientesTab usuarios={usuariosA} />;
+      case 'Administracion':
+        return <AdministracionTab usuarios={usuariosB} />;
+      case 'configuracion':
+        return <ConfiguracionTab />;
       default:
-        return <div>
-          Selecciona una sección para ver su contenido
-          </div>;
+        return <div>Selecciona una sección para ver su contenido</div>;
     }
   };
 
   return (
     <div className="dashboard bg-gray-100 min-h-screen p-4">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Dashboard Administrativo</h2>
-          <p className="text-gray-600">Bienvenido, {currentUser?.nombre || 'Administrador'}!</p>
-        </div>
+        <DashboardHeader userName={currentUser?.nombre || 'Administrador'} />
         
         <div className="flex flex-col md:flex-row gap-6">
           {/* Menú lateral */}
-          <div className="w-full md:w-64 bg-white rounded-lg shadow-lg p-4">
-            <nav>
-              <ul>
-                <li className="mb-2">
-                  <button 
-                    className={`w-full text-left p-3 rounded-lg ${activeTab === 'resumen' ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100'}`}
-                    onClick={() => setActiveTab('resumen')}
-                  >
-                    Dashboard
-                  </button>
-                </li>
-                <li className="mb-2">
-                  <button 
-                    className={`w-full text-left p-3 rounded-lg ${activeTab === 'pedidos' ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100'}`}
-                    onClick={() => setActiveTab('pedidos')}
-                  >
-                    Pedidos
-                  </button>
-                </li>
-                <li className="mb-2">
-                  <button 
-                    className={`w-full text-left p-3 rounded-lg ${activeTab === 'productos' ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100'}`}
-                    onClick={() => setActiveTab('productos')}
-                  >
-                    Productos
-                  </button>
-                </li>
-                <li className="mb-2">
-                  <button 
-                    className={`w-full text-left p-3 rounded-lg ${activeTab === 'clientes' ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100'}`}
-                    onClick={() => setActiveTab('clientes')}
-                  >
-                    Clientes
-                  </button>
-                </li>
-
-                <li className="mb-2">
-                  <button 
-                    className={`w-full text-left p-3 rounded-lg ${activeTab === 'Administracion' ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100'}`}
-                    onClick={() => setActiveTab('Administracion')}
-                  >
-                    Administracion
-                  </button>
-                </li>
-                
-                <li className="mb-2">
-                  <button 
-                    className={`w-full text-left p-3 rounded-lg ${activeTab === 'configuracion' ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100'}`}
-                    onClick={() => setActiveTab('configuracion')}
-                  >
-                    Configuración
-                  </button>
-                </li>
-              </ul>
-            </nav>
-          </div>
+          <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
           
           {/* Contenido principal */}
           <div className="flex-1">
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-semibold mb-4">
-                {activeTab === 'resumen' && 'Resumen General'}
-                {activeTab === 'pedidos' && 'Gestión de Pedidos'}
-                {activeTab === 'productos' && 'Inventario de Productos'}
-                {activeTab === 'clientes' && 'Base de Clientes'}
-                {activeTab === 'Administracion' && 'Base de Clientes'}
-                {activeTab === 'configuracion' && 'Configuración de la Tienda'}
-              </h3>
-              
-              {renderContenidoTab()}
+              <h3 className="text-xl font-semibold mb-4">{getTabTitle()}</h3>
+              {renderContent()}
             </div>
           </div>
         </div>

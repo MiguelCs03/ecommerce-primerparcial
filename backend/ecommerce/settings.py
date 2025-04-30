@@ -10,25 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-from pathlib import Path
-import cloudinary
-
-
-cloudinary.config(
-    cloud_name='dywiyjoph',
-    api_key='199425179995799',
-    api_secret='QsiAhOzgHL2qwsCkl-gWBwBJKEI'
-)
-
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dywiyjoph',
-    'API_KEY': '199425179995799',
-    'API_SECRET': 'QsiAhOzgHL2qwsCkl-gWBwBJKEI'
-}
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,7 +29,8 @@ SECRET_KEY = 'django-insecure-vz8a-km^f(lh0tdtyrny*7vl+4aw5=(hk6yc7d$5)2ul8w-p#=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.0.2.2']
+#ALLOWED_HOSTS = ['3.143.169.26']
 #para activar el modelo personalizado de la tabla usuario 
 AUTH_USER_MODEL = 'Usuarios.Usuario'
 
@@ -68,9 +55,25 @@ INSTALLED_APPS = [
     'cloudinary',
     'cloudinary_storage',
 ]
+from pathlib import Path
+
+from pathlib import Path
+import cloudinary
 
 
+cloudinary.config(
+    cloud_name='dywiyjoph',
+    api_key='199425179995799',
+    api_secret='QsiAhOzgHL2qwsCkl-gWBwBJKEI'
+)
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dywiyjoph',
+    'API_KEY': '199425179995799',
+    'API_SECRET': 'QsiAhOzgHL2qwsCkl-gWBwBJKEI'
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -178,4 +181,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # frontend local
     # Puedes agregar más dominios aquí
 ]
+CORS_ALLOW_ALL_ORIGINS = True
+
 CORS_ALLOW_CREDENTIALS = True
