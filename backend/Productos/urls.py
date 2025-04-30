@@ -4,6 +4,7 @@ from Productos.controllers.categoria_controller import CategoriaListaCrearVista,
 from Productos.controllers.proveedor_controller import ProveedorListaCrearVista, ProveedorDetalleVista
 from Productos.controllers.inventario_controller import InventarioListaCrearVista, InventarioDetalleVista
 from Productos.controllers.producto_controller import ProductosPorCategoriaView
+from Productos.controllers.openai_controller import recomendar_productos,buscar_productos_con_ia
 
 urlpatterns = [
     path('listarCrear/', ProductoListaCrearVista.as_view(), name='producto-listar-crear'),
@@ -15,4 +16,7 @@ urlpatterns = [
     path('proveedores/<int:pk>/', ProveedorDetalleVista.as_view(), name='proveedor-detalle'),
     path('inventarios/', InventarioListaCrearVista.as_view(), name='inventario-listar-crear'),
     path('inventarios/<int:pk>/', InventarioDetalleVista.as_view(), name='inventario-detalle'),
+    path('recomendar/', recomendar_productos),
+    path('buscar-ia/', buscar_productos_con_ia),  # ← nuevo
+
 ]

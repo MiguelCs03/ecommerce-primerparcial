@@ -4,7 +4,8 @@ from Ventas.controllers.tipoVenta_controller import TipoVentaListCreateAPIView, 
 from Ventas.controllers.venta_controller import VentaListCreateAPIView, VentaRetrieveUpdateDestroyAPIView
 from Ventas.controllers.factura_controller import FacturaListCreateAPIView, FacturaRetrieveUpdateDestroyAPIView
 from Ventas.controllers.orden_controller import OrdenViewSet
-from .views import RecomendacionProductosView
+from Ventas.controllers.openai_controller import recomendar_productos_por_usuario
+
 
 urlpatterns = [
     path('estados/', EstadoListCreateAPIView.as_view(), name='estado-list-create'),
@@ -16,15 +17,9 @@ urlpatterns = [
     path('facturas/', FacturaListCreateAPIView.as_view(), name='factura-list-create'),
     path('facturas/<int:pk>/', FacturaRetrieveUpdateDestroyAPIView.as_view(), name='factura-detail'),
     path('ordenes/', OrdenViewSet.as_view({'get': 'list', 'post': 'create'}), name='orden-list-create'),
-    # Para obtener, actualizar o eliminar UNA orden específica
-    path('ordenes/<int:pk>/', OrdenViewSet.as_view({
-        'get': 'retrieve',        # traer una orden por ID
-        'put': 'update',           # actualizar toda la orden
-        'patch': 'partial_update', # actualizar parte de la orden
-        'delete': 'destroy'        # eliminar la orden
-    }), name='orden-detail'),
 
-    path('recomendaciones/', RecomendacionProductosView.as_view(), name='recomendaciones'),
+    path('recomendaciones/usuario/<int:usuario_id>/', recomendar_productos_por_usuario),
+
   
 
 ]

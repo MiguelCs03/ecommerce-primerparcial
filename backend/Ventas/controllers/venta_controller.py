@@ -5,8 +5,6 @@ from Ventas.models import Venta
 from Ventas.serializers import VentaSerializer
 from Productos.models import Inventario, Producto	
 
-
-
 class VentaListCreateAPIView(APIView):
     def get(self, request):
         ventas = Venta.objects.all()
@@ -41,7 +39,6 @@ class VentaListCreateAPIView(APIView):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class VentaRetrieveUpdateDestroyAPIView(APIView):
     def get_object(self, pk):
