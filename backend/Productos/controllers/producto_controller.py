@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from Productos.models import Producto, Categoria
+from Productos.models import Producto, Categoria, Inventario
 from Productos.serializers import ProductoSerializer
 from django.shortcuts import get_object_or_404
 
@@ -12,22 +12,34 @@ class ProductoListaCrearVista(APIView):
     """
 
     def get(self, request):
-        """
-        Obtener la lista de todos los productos (GET)
-        """
         productos = Producto.objects.all()
         serializer = ProductoSerializer(productos, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        """
-        Crear un nuevo producto (POST)
-        """
-        serializer = ProductoSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        nombre = request.data.get('nombre')
+        cantidad = int(request.data.get('cantidad', 0))  # puede venir como string
+
+        try:
+            producto_existente = Producto.objects.get(nombre=nombre)
+            inventario = producto_existente.inventario
+            inventario.stock += cantidad
+            inventario.save()
+            serializer = ProductoSerializer(producto_existente)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Producto.DoesNotExist:
+            # Si no existe, crear nuevo producto
+            producto_serializer = ProductoSerializer(data=request.data)
+            if producto_serializer.is_valid():
+                producto = producto_serializer.save()
+                Inventario.objects.create(
+                    producto=producto,
+                    stock=0,  # stock inicial en 0
+                    cantidad_minima=5,  # puedes ajustar estos valores
+                    cantidad_maxima=100
+                )
+                return Response(producto_serializer.data, status=status.HTTP_201_CREATED)
+            return Response(producto_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProductoDetalleVista(APIView):
