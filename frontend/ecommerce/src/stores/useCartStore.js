@@ -53,7 +53,8 @@ export const useCartStore = create(
       },
 
       clearCart: () => {
-        set({ cart: [], coupon: null, total: 0, subtotal: 0, isCouponApplied: false });
+        set({ cart: [], coupon: null, total: 0, subtotal: 0, isCouponApplied: false ,length: 0});
+      
         toast.success("Carrito vaciado");
       },
 

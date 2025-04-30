@@ -40,7 +40,7 @@ class ProductService {
    */
   static async createProduct(productData) {
     try {
-      const response = await axios.post(`${API_URL}/productos/`, productData);
+      const response = await axios.post(`${API_URL}/productos/listarCrear/`, productData);
       return response.data;
     } catch (error) {
       console.error('Error creating product:', error);

@@ -2,12 +2,11 @@
 
 function Sidebar({ activeTab, setActiveTab }) {
   const menuItems = [
-    { id: 'resumen', label: 'Dashboard' },
-    { id: 'pedidos', label: 'Pedidos' },
+ 
     { id: 'productos', label: 'Productos' },
     { id: 'clientes', label: 'Clientes' },
-    { id: 'Administracion', label: 'Administración' },
-    { id: 'configuracion', label: 'Configuración' },
+    { id: 'Administracion', label: 'Categorias' },
+  
   ];
 
   return (

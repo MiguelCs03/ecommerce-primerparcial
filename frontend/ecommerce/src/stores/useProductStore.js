@@ -2,7 +2,7 @@ import { create } from "zustand";
 import toast from "react-hot-toast";
 import axios from "../lib/axios";
 import ProductService from "../services/ProductService";
-
+import VentaService from "../services/ventaService";
 export const useProductStore = create((set) => ({
 	products: [],
 	loading: false,
@@ -25,10 +25,11 @@ export const useProductStore = create((set) => ({
 		set({ loading: true });
 		try {
 			const response = await ProductService.getAllProducts();
+			console.log( response);
 			set({ products: response, loading: false });
 		} catch (error) {
 			set({ error: "Failed to fetch products", loading: false });
-			toast.error(error.response || "Failed to fetch products");
+			toast.error(error.response.data.error || "Failed to fetch products");
 		}
 	},
 	fetchProductsByCategory: async (category) => {
@@ -81,4 +82,38 @@ export const useProductStore = create((set) => ({
 			console.log("Error fetching featured products:", error);
 		}
 	},
+
+	fetchproductosDestacados: async (id) => {
+		set({ loading: true });
+	
+		const maxRetries = 5;
+		const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+	
+		try {
+			let attempts = 0;
+			let response = [];
+	
+			while (attempts < maxRetries && response.length === 0) {
+				console.log(`Intento #${attempts + 1} para obtener destacados del usuario ${id}`);
+				const result = await VentaService.destacados(id);
+				response = result;
+	
+				if (response.length === 0) {
+					await delay(1000); // Espera 1 segundo antes del siguiente intento
+				}
+				attempts++;
+			}
+	
+			if (response.length === 0) {
+				toast.warning("No se encontraron productos destacados tras varios intentos.");
+			}
+	
+			set({ destacados: response, loading: false });
+		} catch (error) {
+			console.error("Error al obtener productos destacados:", error);
+			set({ error: "Failed to fetch products", loading: false });
+			toast.error(error?.response?.data?.message || "Failed to fetch products");
+		}
+	},
+	
 }));

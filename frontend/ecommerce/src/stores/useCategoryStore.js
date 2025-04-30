@@ -15,8 +15,9 @@ export const useCategoryStore = create((set, get) => ({
   createCategory: async (nombre) => {
     set({ loading: true });
     try {
+      console.log(nombre);
       const newCategory = await CategoryService.create(nombre);
-  
+      
       set((prevState) => ({
         categories: [...prevState.categories, newCategory],
         loading: false,

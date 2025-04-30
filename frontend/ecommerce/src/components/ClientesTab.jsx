@@ -12,7 +12,7 @@ function ClientesTab({ usuarios }) {
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+            {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th> */}
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
@@ -21,10 +21,10 @@ function ClientesTab({ usuarios }) {
               <td className="px-6 py-4 whitespace-nowrap">{usuario.id}</td>
               <td className="px-6 py-4 whitespace-nowrap">{usuario.nombre}</td>
               <td className="px-6 py-4 whitespace-nowrap">{usuario.correo}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              {/* <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <button className="text-indigo-600 hover:text-indigo-900 mr-3">Editar</button>
                 <button className="text-red-600 hover:text-red-900">Eliminar</button>
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>

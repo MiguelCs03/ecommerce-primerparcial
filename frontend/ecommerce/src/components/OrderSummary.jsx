@@ -3,19 +3,12 @@ import { motion } from "framer-motion";
 import { useCartStore } from "../stores/useCartStore";
 import { Link } from "react-router-dom";
 import { MoveRight } from "lucide-react";
-import { loadStripe } from "@stripe/stripe-js";
-import axios from "../lib/axios";
-import { useAuthStoreWithLoading } from "../stores/useAuthStore"; // <- Importa el correcto // Asegúrate de tener este servicio para manejar las ordenes
-import { useAuthStore } from "../stores/useAuthStore";
-
-const stripePromise = loadStripe("pk_test_...");
+import { useAuthStoreWithLoading } from "../stores/useAuthStore";
+import OrderService from "../services/ventaService";
 
 const OrderSummary = () => {
-	
-const { currentUser, isLoading } = useAuthStoreWithLoading();
-	console.log("currentUser",currentUser);
-	console.log("isLoading",isLoading);
-	console.log("isLoading",isLoading);
+	const { currentUser, isLoading } = useAuthStoreWithLoading();
+
 	const {
 		total,
 		subtotal,
@@ -23,14 +16,14 @@ const { currentUser, isLoading } = useAuthStoreWithLoading();
 		isCouponApplied,
 		cart,
 		calculateTotals,
+		clearCart,
+	
 	} = useCartStore();
-    
-	// ✅ Asegurar que se calculen los totales al montar
+
 	useEffect(() => {
 		calculateTotals();
 	}, [calculateTotals]);
 
-	// ✅ Manejar valores seguros
 	const safeSubtotal = Number(subtotal) || 0;
 	const safeTotal = Number(total) || 0;
 	const savings = safeSubtotal - safeTotal;
@@ -39,39 +32,40 @@ const { currentUser, isLoading } = useAuthStoreWithLoading();
 	const formattedTotal = safeTotal.toFixed(2);
 	const formattedSavings = savings.toFixed(2);
 
-	// Handle payment & order creation
-	const handlePayment = async () => {
+	const handlePurchase = async () => {
 		try {
-			// 🛒 Primero creamos la Orden en el backend
+			console.log("currentUser", currentUser);
+			console.log("cart", cart);
+			// if (!currentUser) {
+			// 	alert("Debes iniciar sesión para realizar una compra");
+			// 	return;
+			// }
+
 			const ordenData = {
-				usuario: 1, // Aquí pones el ID del usuario (o lo tomas del auth, como prefieras)
+				usuario: currentUser.user_id,
 				estado: "Pendiente",
 				items: cart.map((item) => ({
-					producto: item.id,
+					producto: item._id,
 					cantidad: item.quantity,
 				})),
 			};
 
-			// ⚡ Crear la orden usando tu servicio
-			const nuevaOrden = await OrdenService.createOrden(ordenData);
+			const nuevaOrden = await OrderService.createOrder(ordenData);
 			console.log("Orden creada:", nuevaOrden);
 
-			// 💳 Luego creamos la sesión de Stripe
-			const stripe = await stripePromise;
-			const res = await axios.post("/payments/create-checkout-session", {
-				products: cart,
-				couponCode: coupon ? coupon.code : null,
-				ordenId: nuevaOrden.id, // Enviar también el ID de la orden creada
-			});
-
-			const session = res.data;
-			const result = await stripe.redirectToCheckout({ sessionId: session.id });
-
-			if (result.error) {
-				console.error("Error:", result.error);
-			}
+			const ventaData = {
+				orden: nuevaOrden.id,
+				total: safeTotal,
+			};
+			console.log("ventaData", ventaData);
+			const nuevaVenta = await OrderService.createVenta(ventaData);
+			console.log("Venta creada:", nuevaVenta);
+       
+			clearCart();
+			alert("¡Compra realizada exitosamente!");
 		} catch (error) {
-			console.error("Error al procesar el pago:", error);
+			console.error("Error al procesar la compra:", error);
+			alert("Hubo un error al procesar tu compra. Intenta nuevamente.");
 		}
 	};
 
@@ -87,20 +81,20 @@ const { currentUser, isLoading } = useAuthStoreWithLoading();
 			<div className="space-y-4">
 				<div className="space-y-2">
 					<dl className="flex items-center justify-between gap-4">
-						<dt className="text-base font-normal text-gray-300">Original price</dt>
+						<dt className="text-base font-normal text-gray-300">Precio original</dt>
 						<dd className="text-base font-medium text-white">${formattedSubtotal}</dd>
 					</dl>
 
 					{savings > 0 && (
 						<dl className="flex items-center justify-between gap-4">
-							<dt className="text-base font-normal text-gray-300">Savings</dt>
+							<dt className="text-base font-normal text-gray-300">Ahorros</dt>
 							<dd className="text-base font-medium text-emerald-400">-${formattedSavings}</dd>
 						</dl>
 					)}
 
 					{coupon && isCouponApplied && (
 						<dl className="flex items-center justify-between gap-4">
-							<dt className="text-base font-normal text-gray-300">Coupon ({coupon.code})</dt>
+							<dt className="text-base font-normal text-gray-300">Cupón ({coupon.code})</dt>
 							<dd className="text-base font-medium text-emerald-400">-{coupon.discountPercentage}%</dd>
 						</dl>
 					)}
@@ -115,18 +109,19 @@ const { currentUser, isLoading } = useAuthStoreWithLoading();
 					className="flex w-full items-center justify-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-300"
 					whileHover={{ scale: 1.05 }}
 					whileTap={{ scale: 0.95 }}
-					onClick={handlePayment}
+					onClick={handlePurchase}
+					disabled={cart.length === 0 || isLoading}
 				>
-					comprar
+					{isLoading ? "Cargando..." : "Finalizar Compra"}
 				</motion.button>
 
 				<div className="flex items-center justify-center gap-2">
-					<span className="text-sm font-normal text-gray-400">or</span>
+					<span className="text-sm font-normal text-gray-400">o</span>
 					<Link
 						to="/"
 						className="inline-flex items-center gap-2 text-sm font-medium text-emerald-400 underline hover:text-emerald-300 hover:no-underline"
 					>
-						Continue Shopping
+						Continuar Comprando
 						<MoveRight size={16} />
 					</Link>
 				</div>

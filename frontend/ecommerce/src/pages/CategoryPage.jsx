@@ -23,7 +23,7 @@ const CategoryPage = () => {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.8 }}
 				>
-					{category.charAt(0).toUpperCase() + category.slice(1)}
+					
 				</motion.h1>
 
 				<motion.div
@@ -34,7 +34,7 @@ const CategoryPage = () => {
 				>
 					{products?.length === 0 && (
 						<h2 className='text-3xl font-semibold text-gray-300 text-center col-span-full'>
-							No products found
+							No se encuentran productos
 						</h2>
 					)}
 

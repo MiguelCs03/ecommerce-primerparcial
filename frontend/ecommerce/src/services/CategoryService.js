@@ -29,7 +29,9 @@ const CategoryService = {
   // Crear una nueva categoría
   create: async (data) => {
     try {
-      const response = await axios.post(API_URL, data);
+      const response = await axios.post(API_URL, {
+        nombre: data, // aseguramos que se mande como { "nombre": "..." }
+      });
       return response.data;
     } catch (error) {
       console.error('Error al crear categoría:', error.response?.data || error.message);

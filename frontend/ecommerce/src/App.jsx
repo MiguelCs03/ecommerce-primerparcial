@@ -18,26 +18,29 @@ function App() {
   return (
     // Eliminar AuthProvider
     <Router>
-      <div>
-        <Navbar />
-      </div>
-      
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path='/category/:category' element={<CategoryPage />} />
-        <Route path='/cart' element={<CartPage />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </Router>
+  <div>
+    <Navbar />
+  </div>
+
+  <div className="pt-16"> {/* Añade espacio arriba para que no se tape el contenido */}
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/category/:category" element={<CategoryPage />} />
+      <Route path="/cart" element={<CartPage />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
+  </div>
+</Router>
+
   );
 }
 

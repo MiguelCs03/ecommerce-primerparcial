@@ -18,12 +18,12 @@ class ProductoListaCrearVista(APIView):
 
     def post(self, request):
         nombre = request.data.get('nombre')
-        cantidad = int(request.data.get('cantidad', 0))  # puede venir como string
+        stock = int(request.data.get('stock', 0))  # puede venir como string
 
         try:
             producto_existente = Producto.objects.get(nombre=nombre)
             inventario = producto_existente.inventario
-            inventario.stock += cantidad
+            inventario.stock += stock
             inventario.save()
             serializer = ProductoSerializer(producto_existente)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -34,7 +34,7 @@ class ProductoListaCrearVista(APIView):
                 producto = producto_serializer.save()
                 Inventario.objects.create(
                     producto=producto,
-                    stock=0,  # stock inicial en 0
+                    stock=stock,  # stock inicial en 0
                     cantidad_minima=5,  # puedes ajustar estos valores
                     cantidad_maxima=100
                 )
