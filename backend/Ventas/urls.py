@@ -15,5 +15,11 @@ urlpatterns = [
     path('facturas/', FacturaListCreateAPIView.as_view(), name='factura-list-create'),
     path('facturas/<int:pk>/', FacturaRetrieveUpdateDestroyAPIView.as_view(), name='factura-detail'),
     path('ordenes/', OrdenViewSet.as_view({'get': 'list', 'post': 'create'}), name='orden-list-create'),
-  
+    # Para obtener, actualizar o eliminar UNA orden específica
+    path('ordenes/<int:pk>/', OrdenViewSet.as_view({
+        'get': 'retrieve',        # traer una orden por ID
+        'put': 'update',           # actualizar toda la orden
+        'patch': 'partial_update', # actualizar parte de la orden
+        'delete': 'destroy'        # eliminar la orden
+    }), name='orden-detail'),
 ]

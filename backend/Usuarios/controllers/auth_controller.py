@@ -50,6 +50,7 @@ class Register(APIView):
             refresh = RefreshToken.for_user(user)
             
             return Response({
+                 "user_id": user.id,
                 "mensaje": "Usuario registrado e iniciada sesión correctamente",
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
@@ -79,6 +80,7 @@ class Login(APIView):
             
             refresh = RefreshToken.for_user(user)
             return Response({
+                 "user_id": user.id,
                 "mensaje": "Login exitoso",
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
