@@ -35,7 +35,7 @@ class TipoVenta(models.Model):
 class Venta(models.Model):
     orden = models.OneToOneField(Orden, on_delete=models.CASCADE)
     total = models.DecimalField(max_digits=10, decimal_places=2)
-    tipo_venta = models.ForeignKey(TipoVenta, on_delete=models.CASCADE)
+    tipo_venta = models.ForeignKey(TipoVenta, on_delete=models.CASCADE,null=True,blank=True)
     fecha = models.DateField(auto_now_add=True)
 
     def __str__(self):
