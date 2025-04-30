@@ -26,7 +26,7 @@ class _ProductosPorCategoriaScreenState extends State<ProductosPorCategoriaScree
 
   Future<void> _fetchProductosPorCategoria() async {
     final url = Uri.parse(
-        'http://10.0.2.2:8000/productos/porCategoria/${widget.categoria}/');
+        'http://18.217.236.76:8000/productos/porCategoria/${widget.categoria}/');
 
     try {
       final response = await http.get(url);

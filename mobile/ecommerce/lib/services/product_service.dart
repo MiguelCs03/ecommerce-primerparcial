@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/producto.dart';
 
 class ProductService {
-  static const String _baseUrl = 'http://10.0.2.2:8000';
+  static const String _baseUrl = 'http://18.217.236.76:8000/';
 
   // Obtener todos los productos
   static Future<List<Producto>> fetchProductos() async {

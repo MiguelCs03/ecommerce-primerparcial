@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Producto> _productos = [];
   List<Categoria> _categorias = [];
 
-  final String _apiUrlBuscar = 'http://10.0.2.2:8000/productos/buscar-ia/';
+  final String _apiUrlBuscar = 'http://18.217.236.76:8000/productos/buscar-ia/';
 
   @override
   void initState() {
