@@ -5,6 +5,15 @@ from Ventas.models import Venta
 from Ventas.serializers import VentaSerializer
 from Productos.models import Inventario, Producto	
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from Ventas.models import Venta
+from Ventas.serializers import VentaSerializer
+from Productos.models import Inventario
+from django.db import transaction
+
+
 class VentaListCreateAPIView(APIView):
     def get(self, request):
         ventas = Venta.objects.all()
@@ -14,31 +23,40 @@ class VentaListCreateAPIView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = VentaSerializer(data=request.data)
         if serializer.is_valid():
-            venta = serializer.save()
+            with transaction.atomic():
+                venta = serializer.save()
 
-            # Buscar el inventario del producto
-            try:
-                inventario = Inventario.objects.get(producto=venta.producto)
-            except Inventario.DoesNotExist:
-                return Response(
-                    {"error": "No hay inventario para este producto."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+                orden_items = venta.orden.items.all()
+                errores = []
 
-            # Verificar si hay suficiente stock
-            if inventario.stock < venta.cantidad:
-                venta.delete()  # revertir la venta
-                return Response(
-                    {"error": "Stock insuficiente."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+                for item in orden_items:
+                    producto = item.producto
+                    cantidad = item.cantidad
 
-            # Restar del stock
-            inventario.stock -= venta.cantidad
-            inventario.save()
+                    try:
+                        inventario = Inventario.objects.get(producto=producto)
+                    except Inventario.DoesNotExist:
+                        errores.append(f"No hay inventario para el producto '{producto.nombre}'.")
+                        continue
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    if inventario.stock < cantidad:
+                        errores.append(f"Stock insuficiente para '{producto.nombre}' (Stock: {inventario.stock}, Requerido: {cantidad}).")
+                        continue
+
+                if errores:
+                    venta.delete()  # Revertir venta si hay errores
+                    return Response({"error": errores}, status=status.HTTP_400_BAD_REQUEST)
+
+                # Si no hay errores, restar stock
+                for item in orden_items:
+                    inventario = Inventario.objects.get(producto=item.producto)
+                    inventario.stock -= item.cantidad
+                    inventario.save()
+
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class VentaRetrieveUpdateDestroyAPIView(APIView):
     def get_object(self, pk):
