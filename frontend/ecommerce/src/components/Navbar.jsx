@@ -7,7 +7,7 @@ const Navbar = () => {
     const { user } = useUserStore();
     const { isAuthenticated, logout } = useAuthStore(); // Use the custom hook
     const isAdmin = user?.role === "admin";
-    const { cart,length } = useCartStore();
+    const { length } = useCartStore();
 
     return (
         <header className='fixed top-0 left-0 w-full bg-white bg-opacity-90 backdrop-blur-md shadow-lg z-40 transition-all duration-300 '>

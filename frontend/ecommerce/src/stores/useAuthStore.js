@@ -13,6 +13,7 @@ export const useAuthStore = create((set, get) => ({
   initialize: () => {
     set({ isLoading: true });
     const user = authService.getCurrentUser();
+    console.log("User:", user);
     if (user) {
       authService.setAuthToken(user.access);
       set({ currentUser: user, isAuthenticated: true, isLoading: false });

@@ -1,15 +1,21 @@
 import {  useEffect,useState } from 'react';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useProductStore } from "../stores/useProductStore";
+import { useUsuarioStore } from '../stores/useUsuarioStore';
 
 function Dashboard() {
   const { currentUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState('resumen');
   const {  products,fetchAllProducts } = useProductStore();
+  const {   fetchUsuariosA, fetchUsuariosB,usuariosA,usuariosB } = useUsuarioStore();
   console.log(products);
+  console.log(usuariosA);
+  console.log(usuariosB);
   useEffect(() => {
 		fetchAllProducts();
-	}, [fetchAllProducts]);
+    fetchUsuariosA();
+    fetchUsuariosB();
+	}, [fetchAllProducts,fetchUsuariosA,fetchUsuariosB],);
   // Datos simulados para el dashboard
   const estadisticas = {
     ventas: {
@@ -42,7 +48,7 @@ function Dashboard() {
             <div className="bg-white rounded-lg shadow p-4">
               <h3 className="text-lg font-medium text-gray-700">Ventas Hoy</h3>
               <p className="text-2xl font-bold">${estadisticas.ventas.hoy}</p>
-              <p className="text-sm text-green-600">+12% respecto a ayer</p>
+              <p className="text-sm text-green-600">+12% respecto a ayer</p>1
             </div>
             
             <div className="bg-white rounded-lg shadow p-4">
@@ -77,6 +83,7 @@ function Dashboard() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -151,39 +158,73 @@ function Dashboard() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Registro</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pedidos</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                 </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">C001</td>
-                  <td className="px-6 py-4 whitespace-nowrap">María López</td>
-                  <td className="px-6 py-4 whitespace-nowrap">maria@ejemplo.com</td>
-                  <td className="px-6 py-4 whitespace-nowrap">12/03/2024</td>
-                  <td className="px-6 py-4 whitespace-nowrap">8</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-indigo-600 hover:text-indigo-900 mr-3">Ver Detalles</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">C002</td>
-                  <td className="px-6 py-4 whitespace-nowrap">Juan Pérez</td>
-                  <td className="px-6 py-4 whitespace-nowrap">juan@ejemplo.com</td>
-                  <td className="px-6 py-4 whitespace-nowrap">15/03/2024</td>
-                  <td className="px-6 py-4 whitespace-nowrap">3</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-indigo-600 hover:text-indigo-900 mr-3">Ver Detalles</button>
-                  </td>
-                </tr>
+              </thead>             
+                <tbody className="bg-white divide-y divide-gray-200">
+                {usuariosA.map((usuariosA) => (
+                  <tr key={usuariosA.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">{usuariosA.id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{usuariosA.nombre}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{usuariosA.correo}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button className="text-indigo-600 hover:text-indigo-900 mr-3">Editar</button>
+                      <button className="text-red-600 hover:text-red-900">Eliminar</button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
+
+
+
+
+            
             </table>
           </div>
         );
+
+        case 'Administracion':
+          return (
+            <div className="bg-white rounded-lg shadow">
+              <div className="p-4 border-b">
+                <h3 className="text-lg font-medium">Clientes Registrados</h3>
+              </div>
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                  </tr>
+                </thead>             
+                  <tbody className="bg-white divide-y divide-gray-200">
+                  {usuariosA.map((usuariosB) => (
+                    <tr key={usuariosB.id}>
+                      <td className="px-6 py-4 whitespace-nowrap">{usuariosB.id}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{usuariosB.nombre}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{usuariosB.correo}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button className="text-indigo-600 hover:text-indigo-900 mr-3">Editar</button>
+                        <button className="text-red-600 hover:text-red-900">Eliminar</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+  
+  
+  
+  
+              
+              </table>
+            </div>
+          );
         
       default:
-        return <div>Selecciona una sección para ver su contenido</div>;
+        return <div>
+          Selecciona una sección para ver su contenido
+          </div>;
     }
   };
 
@@ -232,6 +273,16 @@ function Dashboard() {
                     Clientes
                   </button>
                 </li>
+
+                <li className="mb-2">
+                  <button 
+                    className={`w-full text-left p-3 rounded-lg ${activeTab === 'Administracion' ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100'}`}
+                    onClick={() => setActiveTab('Administracion')}
+                  >
+                    Administracion
+                  </button>
+                </li>
+                
                 <li className="mb-2">
                   <button 
                     className={`w-full text-left p-3 rounded-lg ${activeTab === 'configuracion' ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100'}`}
@@ -252,6 +303,7 @@ function Dashboard() {
                 {activeTab === 'pedidos' && 'Gestión de Pedidos'}
                 {activeTab === 'productos' && 'Inventario de Productos'}
                 {activeTab === 'clientes' && 'Base de Clientes'}
+                {activeTab === 'Administracion' && 'Base de Clientes'}
                 {activeTab === 'configuracion' && 'Configuración de la Tienda'}
               </h3>
               

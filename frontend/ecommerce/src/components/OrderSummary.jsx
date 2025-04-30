@@ -5,10 +5,17 @@ import { Link } from "react-router-dom";
 import { MoveRight } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "../lib/axios";
+import { useAuthStoreWithLoading } from "../stores/useAuthStore"; // <- Importa el correcto // Asegúrate de tener este servicio para manejar las ordenes
+import { useAuthStore } from "../stores/useAuthStore";
 
 const stripePromise = loadStripe("pk_test_...");
 
 const OrderSummary = () => {
+	
+const { currentUser, isLoading } = useAuthStoreWithLoading();
+	console.log("currentUser",currentUser);
+	console.log("isLoading",isLoading);
+	console.log("isLoading",isLoading);
 	const {
 		total,
 		subtotal,
@@ -17,7 +24,7 @@ const OrderSummary = () => {
 		cart,
 		calculateTotals,
 	} = useCartStore();
-
+    
 	// ✅ Asegurar que se calculen los totales al montar
 	useEffect(() => {
 		calculateTotals();
@@ -32,71 +39,92 @@ const OrderSummary = () => {
 	const formattedTotal = safeTotal.toFixed(2);
 	const formattedSavings = savings.toFixed(2);
 
+	// Handle payment & order creation
 	const handlePayment = async () => {
-		const stripe = await stripePromise;
-		const res = await axios.post("/payments/create-checkout-session", {
-			products: cart,
-			couponCode: coupon ? coupon.code : null,
-		});
+		try {
+			// 🛒 Primero creamos la Orden en el backend
+			const ordenData = {
+				usuario: 1, // Aquí pones el ID del usuario (o lo tomas del auth, como prefieras)
+				estado: "Pendiente",
+				items: cart.map((item) => ({
+					producto: item.id,
+					cantidad: item.quantity,
+				})),
+			};
 
-		const session = res.data;
-		const result = await stripe.redirectToCheckout({ sessionId: session.id });
+			// ⚡ Crear la orden usando tu servicio
+			const nuevaOrden = await OrdenService.createOrden(ordenData);
+			console.log("Orden creada:", nuevaOrden);
 
-		if (result.error) {
-			console.error("Error:", result.error);
+			// 💳 Luego creamos la sesión de Stripe
+			const stripe = await stripePromise;
+			const res = await axios.post("/payments/create-checkout-session", {
+				products: cart,
+				couponCode: coupon ? coupon.code : null,
+				ordenId: nuevaOrden.id, // Enviar también el ID de la orden creada
+			});
+
+			const session = res.data;
+			const result = await stripe.redirectToCheckout({ sessionId: session.id });
+
+			if (result.error) {
+				console.error("Error:", result.error);
+			}
+		} catch (error) {
+			console.error("Error al procesar el pago:", error);
 		}
 	};
 
 	return (
 		<motion.div
-			className='space-y-4 rounded-lg border border-gray-700 bg-gray-800 p-4 shadow-sm sm:p-6'
+			className="space-y-4 rounded-lg border border-gray-700 bg-gray-800 p-4 shadow-sm sm:p-6"
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5 }}
 		>
-			<p className='text-xl font-semibold text-emerald-400'>Resumen de Compra</p>
+			<p className="text-xl font-semibold text-emerald-400">Resumen de Compra</p>
 
-			<div className='space-y-4'>
-				<div className='space-y-2'>
-					<dl className='flex items-center justify-between gap-4'>
-						<dt className='text-base font-normal text-gray-300'>Original price</dt>
-						<dd className='text-base font-medium text-white'>${formattedSubtotal}</dd>
+			<div className="space-y-4">
+				<div className="space-y-2">
+					<dl className="flex items-center justify-between gap-4">
+						<dt className="text-base font-normal text-gray-300">Original price</dt>
+						<dd className="text-base font-medium text-white">${formattedSubtotal}</dd>
 					</dl>
 
 					{savings > 0 && (
-						<dl className='flex items-center justify-between gap-4'>
-							<dt className='text-base font-normal text-gray-300'>Savings</dt>
-							<dd className='text-base font-medium text-emerald-400'>-${formattedSavings}</dd>
+						<dl className="flex items-center justify-between gap-4">
+							<dt className="text-base font-normal text-gray-300">Savings</dt>
+							<dd className="text-base font-medium text-emerald-400">-${formattedSavings}</dd>
 						</dl>
 					)}
 
 					{coupon && isCouponApplied && (
-						<dl className='flex items-center justify-between gap-4'>
-							<dt className='text-base font-normal text-gray-300'>Coupon ({coupon.code})</dt>
-							<dd className='text-base font-medium text-emerald-400'>-{coupon.discountPercentage}%</dd>
+						<dl className="flex items-center justify-between gap-4">
+							<dt className="text-base font-normal text-gray-300">Coupon ({coupon.code})</dt>
+							<dd className="text-base font-medium text-emerald-400">-{coupon.discountPercentage}%</dd>
 						</dl>
 					)}
 
-					<dl className='flex items-center justify-between gap-4 border-t border-gray-600 pt-2'>
-						<dt className='text-base font-bold text-white'>Total</dt>
-						<dd className='text-base font-bold text-emerald-400'>${formattedTotal}</dd>
+					<dl className="flex items-center justify-between gap-4 border-t border-gray-600 pt-2">
+						<dt className="text-base font-bold text-white">Total</dt>
+						<dd className="text-base font-bold text-emerald-400">${formattedTotal}</dd>
 					</dl>
 				</div>
 
 				<motion.button
-					className='flex w-full items-center justify-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-300'
+					className="flex w-full items-center justify-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-300"
 					whileHover={{ scale: 1.05 }}
 					whileTap={{ scale: 0.95 }}
 					onClick={handlePayment}
 				>
-					Proceed to Checkout
+					comprar
 				</motion.button>
 
-				<div className='flex items-center justify-center gap-2'>
-					<span className='text-sm font-normal text-gray-400'>or</span>
+				<div className="flex items-center justify-center gap-2">
+					<span className="text-sm font-normal text-gray-400">or</span>
 					<Link
-						to='/'
-						className='inline-flex items-center gap-2 text-sm font-medium text-emerald-400 underline hover:text-emerald-300 hover:no-underline'
+						to="/"
+						className="inline-flex items-center gap-2 text-sm font-medium text-emerald-400 underline hover:text-emerald-300 hover:no-underline"
 					>
 						Continue Shopping
 						<MoveRight size={16} />

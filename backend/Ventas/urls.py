@@ -4,6 +4,7 @@ from Ventas.controllers.tipoVenta_controller import TipoVentaListCreateAPIView, 
 from Ventas.controllers.venta_controller import VentaListCreateAPIView, VentaRetrieveUpdateDestroyAPIView
 from Ventas.controllers.factura_controller import FacturaListCreateAPIView, FacturaRetrieveUpdateDestroyAPIView
 from Ventas.controllers.orden_controller import OrdenViewSet
+from .views import RecomendacionProductosView
 
 urlpatterns = [
     path('estados/', EstadoListCreateAPIView.as_view(), name='estado-list-create'),
@@ -22,4 +23,8 @@ urlpatterns = [
         'patch': 'partial_update', # actualizar parte de la orden
         'delete': 'destroy'        # eliminar la orden
     }), name='orden-detail'),
+
+    path('recomendaciones/', RecomendacionProductosView.as_view(), name='recomendaciones'),
+  
+
 ]

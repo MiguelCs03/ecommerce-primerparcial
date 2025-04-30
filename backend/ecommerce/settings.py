@@ -47,6 +47,10 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 #para activar el modelo personalizado de la tabla usuario 
 AUTH_USER_MODEL = 'Usuarios.Usuario'
 
+#clave de ap
+from decouple import config
+
+OPENAI_API_KEY = config('OPENAI_API_KEY')
 # Application definition
 
 INSTALLED_APPS = [

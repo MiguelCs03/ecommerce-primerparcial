@@ -6,6 +6,21 @@ export const useUserStore = create((set, get) => ({
 	user: null,
 	loading: false,
 	checkingAuth: true,
+	users:[],
+	
+	
+
+	fetchAllUsers: async () => {
+		set({ loading: true });
+		try {
+			const response = await axios.get("/lista/");
+			set({ products: response.data.products, loading: false });
+		} catch (error) {
+			set({ error: "Failed to fetch products", loading: false });
+			toast.error(error.response.data.error || "Failed to fetch products");
+		}
+	},
+
 
 	signup: async ({ name, email, password, confirmPassword }) => {
 		set({ loading: true });
