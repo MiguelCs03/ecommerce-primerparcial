@@ -18,7 +18,7 @@ class ProductoSerializer(serializers.ModelSerializer):
     categoria = CategoriaSerializer(read_only=True)
     proveedor = ProveedorSerializer(read_only=True)
     categoria_id = serializers.PrimaryKeyRelatedField(queryset=Categoria.objects.all(), source='categoria', write_only=True)
-    proveedor_id = serializers.PrimaryKeyRelatedField(queryset=Proveedor.objects.all(), source='proveedor', write_only=True)
+    proveedor_id = serializers.PrimaryKeyRelatedField(queryset=Proveedor.objects.all(), source='proveedor', write_only=True,required=False)
     imagen_url = serializers.SerializerMethodField()
 
     class Meta:
