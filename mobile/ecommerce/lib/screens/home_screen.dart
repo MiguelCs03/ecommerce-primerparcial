@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import '../models/producto.dart';
+import '../services/product_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,34 +11,62 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<dynamic> _productos = [];
-  bool _isLoading = true;
+  List<Producto> productos = [];
+  bool isLoading = true;
+
+  // Voice
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
 
   @override
   void initState() {
     super.initState();
-    _fetchProductos();
+    _speech = stt.SpeechToText();
+    cargarProductos();
   }
 
-  Future<void> _fetchProductos() async {
-    final url = Uri.parse('http://127.0.0.1:8000/productos/listarCrear/');
+  Future<void> cargarProductos() async {
+    setState(() => isLoading = true);
     try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        setState(() {
-          _productos = data;
-          _isLoading = false;
-        });
-      } else {
-        throw Exception('Error al cargar productos');
-      }
-    } catch (e) {
-      print(e);
+      final data = await ProductService.fetchProductos();
       setState(() {
-        _isLoading = false;
+        productos = data;
+        isLoading = false;
       });
+    } catch (e) {
+      print('Error al cargar productos: $e');
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> buscarPorVoz(String texto) async {
+    setState(() => isLoading = true);
+    try {
+      final data = await ProductService.buscarProductosPorVoz(texto);
+      setState(() {
+        productos = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error búsqueda IA: $e');
+      setState(() => isLoading = false);
+    }
+  }
+
+  void iniciarReconocimientoVoz() async {
+    bool available = await _speech.initialize();
+    if (available) {
+      setState(() => _isListening = true);
+      _speech.listen(
+        onResult: (result) {
+          final texto = result.recognizedWords;
+          if (texto.isNotEmpty && result.finalResult) {
+            _speech.stop();
+            setState(() => _isListening = false);
+            buscarPorVoz(texto);
+          }
+        },
+      );
     }
   }
 
@@ -45,34 +74,31 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Catálogo de Productos'),
+        title: const Text('Productos'),
+        backgroundColor: Colors.deepPurple,
       ),
-      body: _isLoading
+      body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: _productos.length,
-              itemBuilder: (context, index) {
-                final producto = _productos[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: ListTile(
-                    leading: producto['imagen'] != null
-                        ? Image.network(
-                            'http://127.0.0.1:8000/${producto['imagen']}',
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover,
-                          )
-                        : const Icon(Icons.image_not_supported),
-                    title: Text(producto['nombre']),
-                    subtitle: Text('Bs ${producto['precio']}'),
-                    onTap: () {
-                      // Aquí después: abrir detalles del producto
-                    },
-                  ),
-                );
-              },
-            ),
+          : productos.isEmpty
+              ? const Center(child: Text('No se encontraron productos'))
+              : ListView.builder(
+                  itemCount: productos.length,
+                  itemBuilder: (context, index) {
+                    final p = productos[index];
+                    return Card(
+                      child: ListTile(
+                        leading: Image.network(p.imagenUrl, width: 60, errorBuilder: (c, o, s) => const Icon(Icons.image_not_supported)),
+                        title: Text(p.nombre),
+                        subtitle: Text('\$${p.precioVenta.toStringAsFixed(2)}'),
+                      ),
+                    );
+                  },
+                ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _isListening ? null : iniciarReconocimientoVoz,
+        backgroundColor: Colors.teal,
+        child: const Icon(Icons.mic),
+      ),
     );
   }
 }
